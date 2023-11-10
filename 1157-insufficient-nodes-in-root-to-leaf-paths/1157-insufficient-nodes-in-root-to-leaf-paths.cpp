@@ -11,15 +11,31 @@
  */
 class Solution {
 public:
+ 
+    bool dfs(TreeNode* root, int limit , int sm){
+        if(!root) return false;
+
+        if(root->left == nullptr && root->right == nullptr){
+            if(sm+root->val < limit) return false;
+            return true;
+        } 
+
+        bool left = dfs(root->left , limit , sm+root->val);
+        bool right = dfs(root->right , limit , sm+root->val);
+
+        if(left == false) root->left = nullptr;
+        if(right == false) root->right = nullptr;
+
+        if(left || right) return true;
+        return false;
+    }
+
     TreeNode* sufficientSubset(TreeNode* root, int limit) {
         if(root == nullptr) return nullptr;
 
-        if(root->left == nullptr && root->right == nullptr)
-        return root->val < limit ? nullptr : root;
+        bool ans = dfs(root , limit , 0);
 
-        root->left = sufficientSubset(root->left , limit-root->val);
-        root->right = sufficientSubset(root->right , limit-root->val);
-
-        return  root->left == root->right ? NULL : root;
+        if(ans) return root;
+        return nullptr;
     }
 };
